@@ -1,0 +1,18 @@
+{
+  "lights": {
+    "ambient": {
+      "color": "0xffffff",
+      "intensity": 1.24,
+      "castShadow": true
+    },
+    "directional": {
+      "color": "0xffffff",
+      "intensity": 2.5,
+      "position": [
+        5,
+        14,
+        15
+      ]
+    }
+  }
+}

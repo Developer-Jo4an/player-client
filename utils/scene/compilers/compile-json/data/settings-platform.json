@@ -1,0 +1,11 @@
+{
+  "compileTo": "assets/settings-platform.json",
+  "root": {
+    "@@controls": "platform/_controls.json",
+    "@@assetsSettings": "platform/_assets-settings.json",
+    "@@createBefore": "platform/_create-before.json",
+    "@@preload": "platform/_preload.json",
+    "@@sceneOverrides": "platform/_scene-overrides.json",
+    "@@mainSceneSettings": "platform/_main-scene-settings.json"
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "subtype": "pixijs",
+    "type": "scene",
+    "name": "winston",
+    "sceneName": "winston",
+    "path": "assets/platform/"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "badItem",
+    "path": "sounds/",
+    "fileName": "platformBadItem.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "goodItem",
+    "path": "sounds/",
+    "fileName": "platformGoodItem.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "lifeItem",
+    "path": "sounds/",
+    "fileName": "platformLifeItem.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "move",
+    "path": "sounds/",
+    "fileName": "platformMove.mp3"
+  }
+]

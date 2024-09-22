@@ -1,0 +1,12 @@
+mixin paint-bg(content, params)
+  .paint-bg&attributes(attributes)
+    .paint-bg__title Фон
+    .paint-bg__cont
+      +template-engine().paint-bg__tpl
+        +pug-list({ list: "this", item: { image: "{{image}}" } }, "paint-bg__item")
+    block
+
+mixin paint-bg__item(content, params)
+  label.paint-bg__item
+    input(type="radio" name="bg" value!=content.image).paint-bg__item-input
+    .paint-bg__item-gui(style!=`background-image: url('${content.image}');`)

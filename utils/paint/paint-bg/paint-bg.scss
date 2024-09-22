@@ -1,0 +1,80 @@
+.paint-bg {
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("paint-bg", $mod){
+      @content;
+    }
+  }
+
+  @mixin check {
+    .paint-bg__item-input:checked + &{
+      @content;
+    }
+  }
+
+  @mixin selected($neighbor: false) {
+    $selector: (unquote(".paint-bg__item-input:checked") unquote("~"));
+    @if not($neighbor) {
+      $selector: append($selector, unquote("*"));
+
+    }
+
+    #{$selector} & {
+      @content;
+    }
+  }
+
+  padding: vw($PAD);
+  box-sizing: border-box;
+  height: 100%;
+
+  @include MOBILE{
+    padding: vw-m(0 40px 40px);
+  }
+
+  &__title{
+    display: none;
+    @include MOBILE{
+      display: block;
+      font-size: vw-m(14px);
+      line-height: vw-m(40px);
+      font-weight: bold;
+    }
+  }
+
+  &__item-input {
+    display: none;
+  }
+
+  &__item {
+    display: block;
+    margin-bottom: vw($PAD);
+    cursor: pointer;
+    &:nth-last-of-type(1){
+      margin-bottom: 0;
+    }
+    @include MOBILE{
+      margin-bottom: vw-m(40px);
+    }
+  }
+
+  &__item-gui {
+    width: 100%;
+    padding-bottom: percentage(90 / 210);
+    background: no-repeat center / cover;
+    border: vw(2px) solid rgba($WHITE,0);
+    box-sizing: border-box;
+    transition: border .3s;
+    @include MOBILE{
+      border: vw-m(2px) solid rgba($WHITE,0);
+    }
+    @include HOVER {
+      &:hover{
+        border-color: rgba($WHITE,1);
+      }
+    }
+    @include check {
+      border-color: rgba($WHITE,1);
+    }
+  }
+}

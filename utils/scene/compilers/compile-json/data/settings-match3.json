@@ -1,0 +1,12 @@
+{
+  "compileTo": "assets/settings-match3.json",
+  "root": {
+    "@@controls": "match3/_controls.json",
+    "@@assetsSettings": "match3/_assets-settings.json",
+    "@@createBefore": "match3/_create-before.json",
+    "@@preload": "match3/_preload.json",
+    "@@sceneOverrides": "match3/_scene-overrides.json",
+    "@@preloadMenu": "_preload.json",
+    "@@mainSceneSettings": "match3/_main-scene-settings.json"
+  }
+}

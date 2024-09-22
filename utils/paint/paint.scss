@@ -1,0 +1,430 @@
+@import "paint-actions/paint-actions";
+@import "paint-bg/paint-bg";
+@import "paint-brush/paint-brush";
+@import "paint-color/paint-color";
+@import "paint-eraser/paint-eraser";
+@import "paint-size/paint-size";
+
+.paint {
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("paint", $mod){
+      @content;
+    }
+  }
+  position: relative;
+  color: $WHITE;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+
+  &__tabs-wrap {
+    display: flex;
+    justify-content: stretch;
+    height: vw($FR);
+    flex: 0 0 vw($FR);
+    width: 100%;
+    @include MOBILE{
+      background: $PURPLE-D;
+      height: vw-m($FR-M*2);
+      flex: 0 0 vw-m($FR-M*2);
+      align-items: center;
+      justify-content: center;
+      order: 10;
+    }
+  }
+
+  &__tab {
+    flex: 1 1 0;
+    width: vw($FR*2);
+    height: 100%;
+    @include MOBILE{
+      width: vw-m($FR-M*2);
+      flex: 0 0 vw-m($FR-M*2);
+    }
+
+    @include HOVER{
+      &:hover{
+        cursor: pointer;
+        .paint__tab-icon path,
+        .paint__tab-icon circle,
+        .paint__tab-icon ellipse{
+          fill: $YELLOW;
+        }
+
+          .paint__tab-name{
+            color: $YELLOW;
+          }
+      }
+    }
+
+  }
+
+  &__tab-input {
+    display: none;
+  }
+  &__tab-gui {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: $PURPLE-D;
+
+    .paint__tab-input:checked + & {
+      background: $PURPLE;
+    }
+  }
+
+  &__tab-name{
+    color: $WHITE;
+    font-size: vw(12px);
+    @include MOBILE{
+      font-size: vw-m(12px);
+    }
+  }
+  &__tab-icon{
+    width: vw(24px);
+    height: vw(24px);
+    flex: 0 0 vw(24px);
+    @include MOBILE{
+      width: vw-m(24px);
+      height: vw-m(24px);
+      flex: 0 0 vw-m(24px);
+    }
+  }
+
+
+  &__tools {
+    width: vw($FR*3);
+    flex: 0 0 vw($FR*3);
+    height: 100%;
+    background: $PURPLE;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    pointer-events: none;
+    > * {
+      pointer-events: all;
+    }
+
+    @include MOBILE{
+      bottom: auto;
+      top: 0;
+      left: 0;
+      position: absolute;
+      background: none;
+      width: 100%;
+      height: 170.8vw;
+      max-height: 100%;
+      //flex-direction: column-reverse;
+      justify-content: flex-end;
+      z-index: 1;
+    }
+  }
+  &__tool {
+    width: 100%;
+    height: vw($FR*3);
+    box-sizing: border-box;
+    padding: vw($PAD);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &_size-brush{
+      height: vw($FR*2);
+    }
+    &_bg{
+      height: 100%;
+    }
+    @include MOBILE{
+      height: auto;
+      padding: vw-m(0 40px 40px);
+    }
+  }
+  &__tool-title {
+    width: 100%;
+    margin: vw(0 0 20px);
+    font-size: vw(16px);
+    color: rgba($WHITE,0.85);
+    @include MOBILE{
+      font-size: vw-m(14px);
+      line-height: vw-m(40px);
+      margin: 0;
+      font-weight: bold;
+      color: rgba($WHITE,1);
+    }
+  }
+
+  &__tool-content{
+    width: 100%;
+    margin: 0;
+  }
+
+  &__canvases {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  &__canvas-overflow {
+    overflow: hidden;
+    width: 100%;
+    height: 73vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    @include MOBILE{
+      height: 148vw;
+
+    }
+  }
+
+  &__canvas-wrap {
+    position: relative;
+    $w: 1000px; // 924px;
+    $h: 1000px; // 582px;
+    width: $w * 2;
+    height: $h * 2;
+    margin: -$h -$w;
+    flex-shrink: 0;
+  }
+  &__canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    &_draw {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    &_view {
+      background: rgba(1, 1, 1, 0);
+    }
+  }
+
+  &__block {
+    width: 100%;
+    min-height: 0;
+    flex: 1 1 0;
+    z-index: 0;
+
+    &:not(&_selected) {
+      @include NOT-MOBILE() {
+        display: none;
+      }
+    }
+    &:not(&_selected-mob) {
+      @include MOBILE() {
+        display: none;
+      }
+    }
+    &_selected-mob{
+      @include MOBILE() {
+        display: block;
+      }
+    }
+    &_selected{
+      @include NOT-MOBILE() {
+        display: block;
+      }
+    }
+    .custom-scroll{
+      height: 100%;
+    }
+
+    @include MOBILE{
+      position: relative;
+      background: $PURPLE;
+      &[data-paint-block="eraser"]{
+        flex: 0 0 auto;
+        height: auto;
+      }
+    }
+
+
+    ._app_ok & {
+      @include MOBILE{
+        position: absolute;
+        top: 100%;
+        height: calc(100vh - 170.8vw - 12.5vw);
+      }
+    }
+  }
+
+  &__block-close-btn {
+    display: flex;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: vw-m($FR-M);
+    height: vw-m($FR-M);
+
+    @include NOT-MOBILE{
+      display: none;
+    }
+  }
+  &__block-close-btn-icon {
+    @include cross(40%, 2px, $WHITE);
+  }
+
+  &__block-content {
+    height: 100%;
+
+    &:before,
+    &:after{
+      content: '';
+      clear: both;
+      display: block;
+      width: 100%;
+      height: 10%;
+      background: red;
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      pointer-events: none;
+
+      @include MOBILE{
+        height: vw-m(20px);
+      }
+    }
+
+    &:before{
+      top: 0;
+      background: linear-gradient(to bottom, rgba($PURPLE,1), rgba($PURPLE,0));
+    }
+
+    &:after{
+      bottom: 0;
+      background: linear-gradient(to top, rgba($PURPLE,1),  rgba($PURPLE,0));
+    }
+
+
+    ._app_ok & {
+      &:before{
+        height: 6vw;
+      }
+    }
+  }
+
+  &__size {
+    width: 100%;
+
+    &_size{
+      margin-bottom: vw(27px);
+      @include MOBILE{
+        margin-bottom: vw-m(0px);
+      }
+    }
+  }
+
+  &__buttons {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: vw(25);
+    right: vw(75);
+    @include MOBILE{
+      top: auto;
+      bottom: 100%;
+      right: 0;
+    }
+  }
+
+  &__canvases-zoom{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 81.3vw;
+    max-height: 100%;
+    pointer-events: none;
+    @include MOBILE{
+      height: 171vw;
+    }
+  }
+
+  &__canvases-zoom-block{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    padding: vw(31px 98px);
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background: rgba($PURPLE-D,0.3);
+    pointer-events: all;
+    @include MOBILE{
+      bottom: vw-m(80px);
+      padding: vw-m(10px 20px);
+    }
+
+  }
+
+  &__scale {
+    width: vw(466px);
+    margin: 0;
+
+    @include MOBILE{
+      width: vw-m($FR-M*3.5);
+      // left: vw-m(20px);
+    }
+  }
+
+  &__dnd{
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    font-size: vw(12px);
+    @include MOBILE{
+      // right: vw-m(20px);
+      // bottom: vw-m(80px);
+      font-size: vw-m(12px);
+    }
+  }
+
+
+  &__stub{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background: $PURPLE-D;
+    z-index: 5;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: vw-m(12px);
+    text-align: center;
+    @include MOBILE{
+      @media (orientation: landscape){
+        display: flex;
+      }
+    }
+  }
+  &__stub-icon{
+    width: vw-m(24px);
+    margin: vw-m(10px 0);
+  }
+}

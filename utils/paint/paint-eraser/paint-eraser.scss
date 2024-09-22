@@ -1,0 +1,8 @@
+.paint-eraser {
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("paint-eraser", $mod){
+      @content;
+    }
+  }
+}

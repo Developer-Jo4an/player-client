@@ -1,0 +1,132 @@
+@import "../../../../../node_modules/rangeslider.js/dist/rangeslider.css";
+
+.paint-size {
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("paint-size", $mod){
+      @content;
+    }
+  }
+
+  position: relative;
+
+  &__title{
+    position: relative;
+    .paint__scale &{
+      font-size: vw(12px);
+      font-weight: bold;
+      @include MOBILE{
+        font-size: vw-m(12px);
+      }
+    }
+  }
+
+  &__input{
+    width: 100%;
+    .paint__scale &{
+      width: 90%;
+      display: block;
+      margin: vw(0 auto);
+      @include MOBILE{
+        width: 100%;
+      }
+    }
+  }
+
+  &__output{
+    position: absolute;
+    top: 0;
+    right: 0;
+    .paint__scale &{
+      font-size: vw(12px);
+      @include MOBILE{
+        font-size: vw-m(12px);
+      }
+    }
+  }
+
+  &__rangeslider{
+    height: vw(14px);
+    background: none;
+    box-shadow: none;
+    margin: vw(11px auto);
+
+    .paint__scale &{
+      width: 90%;
+      @include MOBILE{
+        width: 100%;
+      }
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      margin: auto;
+      display: block;
+      height: 2px;
+      background: rgba($WHITE,0.85);
+    }
+
+    @include MOBILE{
+      height: vw-m(12px);
+      margin: vw-m(11px auto);
+    }
+  }
+
+  &__rangeslider-fill{
+    background: rgba($WHITE,1);
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    .rangeslider--horizontal & {
+      height: 2px;
+    }
+  }
+  &__rangeslider-handle{
+    font-size: vw(14px);
+
+    .rangeslider--horizontal &.rangeslider__handle {
+      top: 0;//-0.5em;
+    }
+    background: $WHITE;
+    width: 1em;
+    height: 1em;
+    border: 2px solid $PURPLE;
+    box-sizing: border-box;
+    &:after{
+      display: none;
+    }
+
+    @include MOBILE{
+      font-size: vw-m(12px);
+    }
+  }
+
+
+  &__btn {
+    //display: inline-block;
+    //vertical-align: middle;
+    //clear: both;
+    position: absolute;
+    bottom: vw(3px);
+    font-size: vw(30px);
+    font-weight: 100;
+    cursor: pointer;
+    @include MOBILE {
+      display: none;
+    }
+
+    &_before {
+      left: 0;
+    }
+    &_after {
+      right: 0;
+    }
+
+  }
+}
+

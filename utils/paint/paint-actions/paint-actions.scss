@@ -1,0 +1,67 @@
+.paint-actions {
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("paint-actions", $mod){
+      @content;
+    }
+  }
+  flex: 0 0 vw($FR);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  // @extend %CLEARFIX;
+
+  @include MOBILE{
+    position: absolute;
+    top: 0;
+    left: 0;
+    // display: none;
+    height: vw-m($FR-M*2);
+    flex: 0 0 vw-m($FR-M*2);
+    background: $PURPLE;
+  }
+
+  &__button {
+    flex: 1 1 0;
+    width: vw($FR);
+    height: vw($FR);
+    background: $PURPLE-D;
+    color: $WHITE;
+    border: none;
+    cursor: pointer;
+    @include MOBILE{
+      height: 100%;
+      flex: 0 0 vw-m($FR-M*2);
+      background: $PURPLE;
+    }
+
+    @include HOVER{
+      &:hover{
+        .paint-actions__button-icon path{
+          fill: $YELLOW;
+        }
+        .paint-actions__button-text{
+          color: $YELLOW;
+        }
+      }
+    }
+  }
+
+  &__button-icon{
+    width: vw(24px);
+    height: vw(24px);
+    flex: 0 0 vw(24px);
+    @include MOBILE{
+      width: vw-m(24px);
+      height: vw-m(24px);
+      flex: 0 0 vw-m(24px);
+    }
+  }
+  &__button-text{
+    font-size: vw(10px);
+    @include MOBILE{
+      font-size: vw-m(10px);
+    }
+  }
+}

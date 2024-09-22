@@ -1,0 +1,87 @@
+include paint-brush/paint-brush
+include paint-color/paint-color
+include paint-eraser/paint-eraser
+include paint-size/paint-size
+include paint-actions/paint-actions
+include paint-bg/paint-bg
+
+mixin paint(content, params)
+  .paint&attributes(attributes)
+    .paint__tools
+      +paint-actions.paint__actions
+
+      form.paint__tabs-wrap
+        +paint__tab({title: "Фон", value: "bg", checked: false})
+        +paint__tab({title: "Кисть", value: "brush", checked: true})
+        +paint__tab({title: "Ластик", value: "eraser", checked: false})
+
+      +paint__block()(data-paint-block="bg")
+        +custom-scroll().paint__block-content
+          +paint-bg
+
+      +paint__block()(data-paint-block="brush")
+        +custom-scroll().paint__block-content
+          +paint__tool({title: "Выбор кисти"}).paint__tool_type-brush
+            +paint-brush().paint__shape
+
+          +paint__tool({title: "Настройки кисти"}).paint__tool_size-brush
+            +paint-size({ suffix: "px", range: { name: "size", min: 1, max: 250, value: 50 } }).paint__size.paint__size_size Размер
+            +paint-size({ suffix: "%", range: { name: "opacity", min: 0, max: 100, value: 100 } }).paint__size.paint__size_opacity Прозрачность
+
+          +paint__tool({title: "Цвета"}).paint__tool_color-brush
+            +paint-color({ range: { name: "color" } }).paint__color
+
+      +paint__block()(data-paint-block="eraser")
+        +paint__tool({ title: "Настройки ластика" })
+          //-+paint-eraser({ range: { name: "eraser" } }).paint__eraser
+          +paint-size({ suffix: "px", range: { name: "er_size", min: 1, max: 250, value: 50 } }).paint__size.paint__size_size Размер
+          +paint-size({ suffix: "%", range: { name: "er_opacity", min: 0, max: 100, value: 80 } }).paint__size.paint__size_opacity Прозрачность
+
+    .paint__canvases
+      .paint__canvas-overflow
+        .paint__canvas-wrap
+          canvas.paint__canvas.paint__canvas_view
+          canvas.paint__canvas.paint__canvas_draw
+
+      .paint__canvases-zoom
+        .paint__canvases-zoom-block
+          +paint-size({
+            "before": {"mod": "minus", "text": "-"},
+            "after": {"mod": "plus", "text": "+"},
+            suffix: "%",
+            range: { name: "scale", min: 0, max: 200, value: 100, showValue: 100 },
+            scale: [50, 100, 200]
+          }).paint__scale Масштаб
+          +checkbox.paint__dnd Перемещение
+
+    .paint__buttons
+      +button().button_paint.button_hidden Выбрать другой объект
+      +button()(data-action="save").button_paint Сохранить и продолжить
+
+    .paint__stub
+      .paint__stub-text Чтобы рисовать, нужно повернуть устройство в&nbsp;портретный режим
+      img(src="images/panel/stub-icon.svg").paint__stub-icon
+
+    block
+
+
+mixin paint__tab(content, params)
+  label.paint__tab
+    input(type="radio" name="paint__tab" value!=content.value, checked=content.checked).paint__tab-input
+    .paint__tab-gui
+      != read(`app/components/project/paint/svg/${content.value}.svg`)
+      .paint__tab-name!= content.title
+
+
+mixin paint__block(content, params)
+  .paint__block&attributes(attributes)
+    .paint__block-close-btn
+      .paint__block-close-btn-icon
+    block
+
+
+mixin paint__tool(content, params)
+  .paint__tool&attributes(attributes)
+    h3.paint__tool-title!= content.title
+    .paint__tool-content
+      block

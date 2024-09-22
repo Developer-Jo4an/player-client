@@ -1,0 +1,67 @@
+[
+  {
+    "subtype": "threejs",
+    "type": "gltf",
+    "name": "elf",
+    "path": "assets/elf/",
+    "fileName": "Elf.gltf",
+    "objectOverrides": {
+      "&head-base.jpg": {
+        "flipY": false
+      },
+      "&outerwear-base.jpg": {
+        "flipY": false
+      },
+      "&pants-base.jpg": {
+        "flipY": false
+      },
+      "&drops-texture.jpg": {
+        "flipY": false
+      },
+      "&toothbrush-texture.jpg": {
+        "flipY": false
+      },
+      "&perfume-bottle-texture.jpg": {
+        "flipY": false
+      },
+      "&perfume-texture.png": {
+        "flipY": false
+      },
+      "&foam-texture.jpg": {
+        "flipY": false
+      },
+      "&patches-texture.jpg": {
+        "flipY": false
+      },
+      "&serum-face-texture.jpg": {
+        "flipY": false
+      },
+      "$perfume-bottle-texture.jpg": {
+        "flipY": false
+      },
+      "$perfume-texture.png": {
+        "flipY": false
+      },
+      "&mask-texture.jpg": {
+        "flipY": false
+      },
+      "&cream-texture.jpg": {
+        "flipY": false
+      }
+    }
+  },
+  {
+    "subtype": "threejs",
+    "type": "texture",
+    "name": "shadow_x2",
+    "path": "assets/elf/",
+    "fileName": "shadow_х2.png"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "click",
+    "path": "sounds/",
+    "fileName": "click.wav"
+  }
+]

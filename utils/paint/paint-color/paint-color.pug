@@ -1,0 +1,16 @@
+mixin paint-color(content, params)
+  .paint-color&attributes(attributes)
+    //- input(type="color")&attributes(content.range).paint-color__input
+    .paint-color__cont
+      +template-engine().paint-color__tpl
+        +pug-list({list: "this", item: {id: "{{id}}"}}, "paint-color__item")
+      block
+
+mixin paint-color__item(content, params)
+  label.paint-color__item&attributes(attributes)
+    input(type="radio" name="color" value!=content.id).paint-color__item-input
+    .paint-color__item-gui
+      .paint-color__item-border
+      .paint-color__item-color(style=`background-color: ${content.id};`)
+
+

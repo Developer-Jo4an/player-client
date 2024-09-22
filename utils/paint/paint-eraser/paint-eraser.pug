@@ -1,0 +1,5 @@
+mixin paint-eraser(content, params)
+  label.paint-eraser&attributes(attributes)
+    input(type="checkbox")&attributes(content.range).paint-eraser__input
+    | #{" "}Ластик
+    block

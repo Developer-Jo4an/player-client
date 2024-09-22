@@ -1,0 +1,17 @@
+.sequential-animation {
+  @mixin mod($mod) {
+    @include modifier("sequential-animation", $mod) {
+      @content;
+    }
+  }
+}
+
+.sequential {
+
+  &__stub {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+  }
+}

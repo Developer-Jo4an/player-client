@@ -1,0 +1,65 @@
+[
+  {
+    "subtype": "pixijs",
+    "type": "scene",
+    "name": "screens_pixi",
+    "sceneName": "screens_pixi",
+    "path": "assets/match3/"
+  },
+  {
+    "subtype": "pixijs",
+    "type": "texture",
+    "name": "field_background",
+    "path": "images/match3/",
+    "fileName": "field_background.png"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "match3",
+    "path": "sounds/",
+    "fileName": "match3.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "swipe",
+    "path": "sounds/",
+    "fileName": "match3Swipe.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "remove",
+    "path": "sounds/",
+    "fileName": "match3Remove.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "drop",
+    "path": "sounds/",
+    "fileName": "match3Drop.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "color_animation",
+    "path": "sounds/",
+    "fileName": "color_animation.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "ram_animation",
+    "path": "sounds/",
+    "fileName": "ram_animation.mp3"
+  },
+  {
+    "subtype": "howler",
+    "type": "sound",
+    "name": "cross_animation",
+    "path": "sounds/",
+    "fileName": "cross_animation.mp3"
+  }
+]

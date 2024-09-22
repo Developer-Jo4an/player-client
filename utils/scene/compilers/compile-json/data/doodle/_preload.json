@@ -1,0 +1,9 @@
+[
+  {
+    "subtype": "pixijs",
+    "type": "scene",
+    "name": "hero",
+    "path": "assets/doodle/",
+    "sceneName": "hero"
+  }
+]

@@ -1,0 +1,14 @@
+mixin paint-brush(content, params)
+  .paint-brush&attributes(attributes)
+    +svg-lib.paint-brush__lib
+    .paint-brush__cont
+      +template-engine().paint-brush__tpl
+        +pug-list({list: "this", item: {id: "{{id}}"}}, "paint-brush__item")
+      block
+
+mixin paint-brush__item(content, params)
+  label.paint-brush__item&attributes(attributes)
+    input(type="radio" name="brush" value!=content.id).paint-brush__item-input
+    .paint-brush__item-gui
+      svg(xmlns:xlink="http://www.w3.org/1999/xlink").paint-brush__item-preview
+        use.paint-brush__item-use(xlink:href!="#" + content.id)

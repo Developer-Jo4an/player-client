@@ -1,0 +1,11 @@
+{
+  "compileTo": "assets/settings-elf.json",
+  "root": {
+    "@@controls": "elf/_controls.json",
+    "@@assetsSettings": "elf/_assets-settings.json",
+    "@@createBefore": "elf/_create-before.json",
+    "@@preload": "elf/_preload.json",
+    "@@sceneOverrides": "elf/_scene-overrides.json",
+    "@@mainSceneSettings": "elf/_main-scene-settings.json"
+  }
+}

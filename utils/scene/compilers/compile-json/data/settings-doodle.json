@@ -1,0 +1,11 @@
+{
+  "compileTo": "assets/settings-doodle.json",
+  "root": {
+    "@@controls": "doodle/_controls.json",
+    "@@assetsSettings": "doodle/_assets-settings.json",
+    "@@createBefore": "doodle/_create-before.json",
+    "@@preload": "doodle/_preload.json",
+    "@@sceneOverrides": "doodle/_scene-overrides.json",
+    "@@mainSceneSettings": "doodle/_main-scene-settings.json"
+  }
+}

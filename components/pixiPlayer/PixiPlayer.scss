@@ -1,0 +1,128 @@
+$HOVER: rgba(#000000, 1);
+$BLACK-OPACITY: rgba(#000000, 0.3);
+$BLUE-OPACITY: rgba(blue, 0.1);
+$BLUE: rgba(blue, 0.7);
+
+.pixi-player {
+  width: 100vw;
+  height: 100vh;
+
+  font-size: 16px !important;
+
+  position: relative;
+
+  &__drag-area {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    transition: .3s;
+
+    overflow: hidden;
+
+    width: 70%;
+    height: 70%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: $BLACK-OPACITY;
+
+    border-radius: 20px;
+
+    &_active {
+      left: 60%;
+    }
+
+    &:hover {
+      background-color: $HOVER;
+      color: #ffffff !important;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  &__input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__input {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__tutorial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    &-text {
+      font-size: 16px;
+    }
+  }
+
+  &__library {
+    width: 20%;
+    height: 100%;
+
+    padding: 20px;
+
+    background-color: $BLACK-OPACITY;
+
+    &-scrollbar {
+      border-radius: 20px;
+
+      max-height: 30%;
+    }
+
+    &-item {
+      padding: 10px 20px 10px 10px;
+
+      box-sizing: border-box;
+
+      transition: background-color .3s;
+
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &:hover {
+        background-color: $BLUE-OPACITY;
+      }
+
+      &_active {
+        background-color: $BLUE-OPACITY;
+        color: $BLUE
+      }
+
+      &-pause {
+        padding: 6px;
+        border-radius: 50%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        transition: .3s;
+
+        &:hover {
+          background-color: $BLUE-OPACITY
+        }
+      }
+    }
+  }
+}

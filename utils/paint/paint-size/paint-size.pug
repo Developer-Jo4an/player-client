@@ -1,0 +1,19 @@
+mixin paint-size(content, params)
+  .paint-size(data-range!=content.scale)&attributes(attributes)
+    +paint-size__btn(content.before).paint-size__btn_before
+    .paint-size__title
+      block
+    .paint-size__output
+      span.paint-size__output-val!=content.range.showValue || content.range.value
+      | #{" "}
+      span.paint-size__output-suffix!=content.suffix
+    input(type="range")&attributes(content.range).paint-size__input
+    +paint-size__btn(content.after).paint-size__btn_after
+    //-.rangeslider.paint-size__rangeslider
+      .rangeslider__fill.paint-size__rangeslider-fill
+      .rangeslider__handle.paint-size__rangeslider-handle
+
+mixin paint-size__btn(content, params)
+  if content
+    .paint-size__btn(class=`paint-size__btn_${content.mod}` data-paint-size!=content.mod)&attributes(attributes)
+      != content.text

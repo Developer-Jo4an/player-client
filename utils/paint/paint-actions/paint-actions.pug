@@ -1,0 +1,13 @@
+mixin paint-actions(content, params)
+  .paint-actions&attributes(attributes)
+    +paint-actions__button({name:"back"})(data-action="undo") Назад
+    +paint-actions__button({name:"next"})(data-action="redo") Вперед
+    +paint-actions__button({name:"reset"})(data-action="reset") Заново
+    block
+
+
+mixin paint-actions__button(content,params)
+  button.paint-actions__button&attributes(attributes)
+    != read(`app/components/project/paint/paint-actions/svg/${content.name}.svg`)
+    .paint-actions__button-text
+      block

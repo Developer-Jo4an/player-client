@@ -1,0 +1,178 @@
+.custom-modal {
+  @mixin modifier($class, $mod) {
+    $modTmp: unquote("");
+    @if type-of($mod) == list {
+      @each $m in $mod {
+        $modTmp: $modTmp + unquote(".#{$class}_#{$m}");
+      }
+    } @else {
+      $modTmp: unquote(".#{$class}_#{$mod}");
+    }
+
+    //@debug nth(nth(&, 1), 1);
+    $first-class: split-pseudo-class(nth(nth(&, 1), 1));
+    @if length($first-class) > 1 {
+      @for $i from 2 through length($first-class) {
+        $modTmp: $modTmp + unquote("::") + nth($first-class, $i);
+      }
+    }
+
+    @if (nth($first-class, 1) != unquote(".#{$class}")) {
+      $modTmp: $modTmp + unquote(" &");
+    }
+
+    @at-root #{$modTmp} {
+      @content;
+    }
+  }
+  // Константы
+  @mixin mod($mod) {
+    @include modifier("custom-modal", $mod) {
+      @content;
+    }
+  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $z-modal;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  outline: 0;
+
+  &__bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#000, .8);
+
+    .custom-modal-enter & {
+      opacity: 0;
+    }
+
+    .custom-modal-enter-active & {
+      opacity: 1;
+      transition: opacity 300ms, transform 300ms;
+    }
+
+    .custom-modal-exit & {
+      opacity: 1;
+    }
+
+    .custom-modal-exit-active & {
+      opacity: 0;
+      transition: opacity 300ms, transform 300ms;
+    }
+  }
+
+  &__container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  &__block {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: auto;
+    margin: auto;
+    pointer-events: none;
+    will-change: opacity, transform;
+
+    @include mod("bottom") {
+      margin-bottom: 0;
+    }
+
+    @include mod("top") {
+      margin-top: 0;
+    }
+
+    @include mod("left") {
+      margin-left: 0;
+    }
+
+    @include mod("right") {
+      margin-right: 0;
+    }
+
+    @include mod("fullpage") {
+      flex-direction: column;
+      justify-content: flex-start;
+      max-width: 100%;
+      max-height: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    .custom-modal-enter-active &,
+    .custom-modal-exit-active & {
+      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+    }
+
+    ////fade
+    .custom-modal-enter.fade & {
+      opacity: 0;
+    }
+
+    .custom-modal-enter-active.fade &,
+    .custom-modal-enter-done.fade &,
+    .custom-modal-exit.fade & {
+      opacity: 1;
+    }
+
+    .custom-modal-exit-active.fade &,
+    .custom-modal-exit-done.fade & {
+      opacity: 0;
+    }
+
+    ////scale
+    .custom-modal-enter.scale & {
+      transform: scale(0.7);
+    }
+
+    .custom-modal-enter-active.scale &,
+    .custom-modal-enter-done.scale &,
+    .custom-modal-exit.scale & {
+      transform: scale(1);
+    }
+
+    .custom-modal-exit-active.scale &,
+    .custom-modal-exit-done.scale & {
+      transform: scale(0.7);
+    }
+  }
+
+  &__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    margin: auto;
+    pointer-events: auto;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: .3rem;
+    outline: 0;
+
+    @include mod("fullpage") {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
+  }
+}
+
+.custom-modal.fade:not(.show) {
+  opacity: 1;
+}
