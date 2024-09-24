@@ -1,4 +1,5 @@
 import {inputController} from "./InputController";
+import {fromHex} from "../../utils/helpers";
 
 class Controller {
 
@@ -6,23 +7,27 @@ class Controller {
     input: inputController
   };
 
-  constructor({container, lib, framerate, totalFrames, eventBus}) {
+  constructor({container, eventBus, file, active, helpersColor, isHelpers, color}) {
     this.onResize = this.onResize.bind(this);
     this.update = this.update.bind(this);
 
     this.container = container;
     this.eventBus = eventBus;
-    this.lib = lib;
 
-    this.framerate = framerate;
-    this.totalFrames = totalFrames;
+    this.lib = file.lib;
 
-    this.active = null;
+    this.framerate = file.framerate;
+    this.totalFrames = file.totalFrames;
 
-    this.isHelpers = true;
+    this.active = active;
+
+    this.isHelpers = isHelpers;
     this.helpers = {};
 
     this.isPaused = false;
+
+    this.color = color;
+    this.helpersColor = helpersColor;
 
     this.initApplication();
     this.onResize();
@@ -33,7 +38,7 @@ class Controller {
       resolution: 1,
       autoResize: true,
       antialias: true,
-      backgroundColor: 0x000000
+      backgroundColor: this.color
     });
     globalThis.__PIXI_APP__ = this.app;
     this.container.append(this.app.view);
@@ -43,6 +48,7 @@ class Controller {
 
   update() {
     this.active && this.isHelpers && this.setHelpers();
+    this.active && console.log(this.active.labels);
   }
 
   setActive(payload) {
@@ -56,7 +62,6 @@ class Controller {
   setIsPaused() {
     this.isPaused = !this.isPaused;
     this.active?.[this.isPaused ? "stop" : "gotoAndPlay"]?.(this.active.currentFrame);
-    this.app.ticker?.[this.isPaused ? "stop" : "start"]?.();
     this.eventBus.dispatchEvent({type: "item:set-isPaused", payload: this.isPaused});
   }
 
@@ -65,6 +70,17 @@ class Controller {
     this[!this.isHelpers ? "killHelpers" : "setHelpers"]();
     this.eventBus.dispatchEvent({type: "item:set-isHelpers", payload: this.isHelpers});
     this.app.render();
+  }
+
+  setColor(payload) {
+    this.color = fromHex(payload);
+    this.app.renderer.backgroundColor = this.color;
+    this.eventBus.dispatchEvent({type: "item:set-color", payload});
+  }
+
+  setHelpersColor(payload) {
+    this.helpersColor = payload;
+    this.eventBus.dispatchEvent({type: "item:set-helpersColor", payload});
   }
 
   setSettings(payload) {
@@ -91,15 +107,17 @@ class Controller {
   }
 
   setHelpers() {
+    if (!this.active) return;
+
     this.killHelpers();
 
     const {x, y, width, height} = this.active.getBounds();
 
     const border = this.helpers.border = new PIXI.Graphics();
-    border.lineStyle(2, 0xff0000).drawRect(x, y, width, height);
+    border.lineStyle(2, fromHex(this.helpersColor)).drawRect(x, y, width, height);
 
     const pivot = this.helpers.pivot = new PIXI.Graphics();
-    pivot.lineStyle(2, 0xff0000).beginFill(0xff0000, 1).drawCircle(x + width / 2, y + height / 2, 2);
+    pivot.lineStyle(2, fromHex(this.helpersColor)).beginFill(0xff0000, 1).drawCircle(x + width / 2, y + height / 2, 2);
 
     this.app.stage.addChild(border);
     this.app.stage.addChild(pivot);

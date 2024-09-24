@@ -25,6 +25,13 @@ export const useUnpackLibrary = () => {
         const formData = new FormData();
         formData.append("archive", file);
 
+        const response = await fetch('/upload-asset.php', {
+          method: 'PUT',
+          body: formData,
+        });
+        console.log(response);
+        debugger
+
         await req({method: "post", path: "/upload-archive", data: formData});
 
         const buffer = await JSZip.loadAsync(arrayBuffer);

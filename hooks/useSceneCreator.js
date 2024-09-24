@@ -5,8 +5,8 @@ export const useSceneCreator = (state, reducerFunc, ref) => {
     if (!state.file) return;
     (async () => {
       const {default: Wrapper} = await import("../controllers/pixiPlayer/Wrapper");
-      const wrapper = new Wrapper(state, ref);
-      wrapper.initController();
+      const wrapper = new Wrapper(ref);
+      wrapper.initController(state);
       reducerFunc({type: "setWrapper", payload: wrapper});
     })();
   }, [state.file]);
@@ -30,6 +30,14 @@ export const useSceneCreator = (state, reducerFunc, ref) => {
 
     eventBus.addEventListener("item:set-isHelpers", ({payload}) => {
       reducerFunc({type: "setIsHelpers", payload});
+    });
+
+    eventBus.addEventListener("item:set-color", ({payload}) => {
+      reducerFunc({type: "setColor", payload});
+    });
+
+    eventBus.addEventListener("item:set-helpersColor", ({payload}) => {
+      reducerFunc({type: "setHelpersColor", payload});
     });
   }, [state]);
 };

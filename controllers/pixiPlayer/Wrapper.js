@@ -5,15 +5,16 @@ let instance = null;
 
 export default class Wrapper {
 
-  constructor(state, container) {
+  constructor(container) {
     instance && instance.reset();
     instance = this;
 
-    this.framerate = state.file.framerate;
-    this.lib = state.file.lib;
-    this.totalFrames = state.file.totalFrames;
     this.container = container.current;
     this.eventBus = new EventDispatcher();
+  }
+
+  getLib() {
+    return this.controller && this.controller.lib;
   }
 
   setActive(key) {
@@ -28,12 +29,20 @@ export default class Wrapper {
     this.controller && this.controller.setIsPaused();
   }
 
-  reset() {
-    this.controller.reset();
+  setColor(payload) {
+    this.controller && this.controller.setColor(payload);
   }
 
-  initController() {
-    const {container, lib, framerate, totalFrames, eventBus} = this;
-    this.controller = new Controller({container, lib, framerate, totalFrames, eventBus});
+  setHelpersColor(payload) {
+    this.controller && this.controller.setHelpersColor(payload);
+  }
+
+  reset() {
+    this.controller && this.controller.reset();
+  }
+
+  initController(state) {
+    const {eventBus, container} = this;
+    this.controller = new Controller({...state, container, eventBus});
   }
 }
