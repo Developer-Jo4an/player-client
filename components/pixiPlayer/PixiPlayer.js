@@ -1,75 +1,29 @@
-import React, {useReducer, useRef} from "react";
-import {useUnpackLibrary} from "../../hooks/useUnpackLibrary";
+import React, {useRef} from "react";
 import {useSceneCreator} from "../../hooks/useSceneCreator";
 import classNames from "classnames";
 import {Scrollbars} from "react-custom-scrollbars-2";
 import {pixiLayer} from "../../constants/copyright";
 import {ChromePicker} from "react-color";
-
-const initialState = {
-  file: null,
-  wrapper: null,
-  active: null,
-  isPaused: false,
-  scale: 1,
-  isHelpers: true,
-  color: "#ff0000",
-  helpersColor: "#000000",
-  activeColor: "canvas"
-};
-
-const reducerLogic = {
-  setFile: payload => ({file: payload}),
-  setWrapper: payload => ({wrapper: payload}),
-  setActive: payload => ({active: payload}),
-  setIsPaused: payload => ({isPaused: payload}),
-  setScale: payload => ({scale: payload}),
-  setIsHelpers: payload => ({isHelpers: payload}),
-  setActiveColor: payload => ({activeColor: payload}),
-  setColor: payload => ({color: payload}),
-  setHelpersColor: payload => ({helpersColor: payload})
-};
-
-const reducer = (state, action) => {
-  const {type, payload} = action;
-  return {...state, ...reducerLogic[type](payload)};
-};
+import {FaPause, FaPlay} from "react-icons/fa";
+import {usePixiPlayerContext} from "../../pages/PixiPlayerProvider";
+import {usePlayerCallbacks} from "../../hooks/usePlayerCallbacks";
+import Tumbler from "../tumbler/Tumbler";
 
 const PixiPlayer = () => {
-  const sceneRef = useRef();
-  const unpack = useUnpackLibrary();
-  const [state, reducerFunc] = useReducer(reducer, initialState, state => state);
+  const {state, reducerFunc} = usePixiPlayerContext();
   const {scrollbar} = pixiLayer;
+  const sceneRef = useRef();
 
-  const onDrop = async e => {
-    const library = await unpack(e);
-    reducerFunc({type: "setFile", payload: library});
-  };
-
-  const setActive = key => {
-    if (key === state.active?.name) return;
-    state.wrapper.setActive(key);
-  };
-
-  const setIsPaused = () => {
-    state.wrapper.setIsPaused();
-  };
-
-  const setIsHelpers = () => {
-    state.wrapper.setIsHelpers();
-  };
-
-  const setColor = (data) => {
-    state.wrapper.setColor(data.hex);
-  };
-
-  const setHelpersColor = (data) => {
-    state.wrapper.setHelpersColor(data.hex);
-  };
-
-  const setActiveColor = payload => {
-    reducerFunc({type: "setActiveColor", payload});
-  };
+  const {
+    onDrop,
+    setActive,
+    setIsPaused,
+    setIsHelpers,
+    setColor,
+    setHelpersColor,
+    setActiveLabel,
+    setActiveColor
+  } = usePlayerCallbacks();
 
   useSceneCreator(state, reducerFunc, sceneRef);
 
@@ -96,37 +50,58 @@ const PixiPlayer = () => {
           >{Object.entries(state.wrapper.getLib() ?? {}).map(([key, Class]) => {
             const isMovieClip = Class.prototype instanceof PIXI.animate.MovieClip;
             const isActive = state.active?.name === key;
+            const isActiveMovieClip = isMovieClip && isActive;
+            const labels = isActiveMovieClip ? state.active.labels : null;
+
             return (
               <div
                 key={key}
-                className={classNames("pixi-player__library-item", {
-                  "pixi-player__library-item_active": isActive
-                })}
+                className={classNames("pixi-player__library-item", {"pixi-player__library-item_active": isActive})}
                 onClick={() => setActive(key)}
               >
-                <div className={"pixi-player__library-item-text"}>{key}</div>
-                {isMovieClip && isActive && <div className={"pixi-player__library-item-controls"}>
-                  <div className={"pixi-player__library-item-pause"} onClick={setIsPaused}>
-                    {!state.isPaused ? "Пауз." : "Проигр."}
-                  </div>
-                </div>}
+                <div className={"pixi-player__library-item-clip"}>
+                  <div className={"pixi-player__library-item-name"}>{key}</div>
+                  {isActiveMovieClip && <div
+                    className={"pixi-player__library-item-pause"}
+                    onClick={setIsPaused}
+                  >{!state.isPaused ? <FaPause/> : <FaPlay/>}
+                  </div>}
+                </div>
+                {isActiveMovieClip && !!labels?.length &&
+                  <div className={"pixi-player__library-item-labels"}>
+                    {labels
+                    .filter(({label}) => !label.includes("_stop"))
+                    .map(({label}) => {
+                      return <div key={label} className={"pixi-player__library-item-label-item"}>
+                        <div>{label}</div>
+                        <Tumbler
+                          width={30}
+                          active={state.activeLabel === label}
+                          onToggle={() => setActiveLabel(label)}
+                        />
+                      </div>;
+                    })}
+                  </div>}
               </div>
             );
           })}
           </Scrollbars>
           <div className={"pixi-player__tumblers"}>
-            <div onClick={setIsHelpers} className={"pixi-player__tumblers-item"}>
+            <div className={"pixi-player__tumblers_helpers"}>
               <div className={"pixi-player__tumblers-name"}>Helpers</div>
-              <div className={"pixi-player__tumblers-switch"}>{state.isHelpers ? "Вкл." : "Выкл."}</div>
+              <Tumbler width={40} active={state.isHelpers} onToggle={setIsHelpers}/>
             </div>
-            <div className={"pixi-player__tumblers-item"}>
-              <div className={"pixi-player__color-toggle"}>
-                <div className={"pixi-player__color-name"}
-                     onClick={() => setActiveColor("canvas")}>scene
-                </div>
-                <div className={"pixi-player__color-name"}
-                     onClick={() => setActiveColor("helpers")}>helpers
-                </div>
+            <div className={"pixi-player__tumblers_helper-color helper-color"}>
+              <div className={"helper-color__toggle-wrapper"}
+                   onClick={() => setActiveColor(state.activeColor === "canvas" ? "helpers" : "canvas")}>
+                <div className={classNames("helper-color__color-name", {
+                  "helper-color__color-name_active": state.activeColor === "canvas"
+                })}
+                >Scene</div>
+                <div className={classNames("helper-color__color-name", {
+                  "helper-color__color-name_active": state.activeColor === "helpers"
+                })}>Helpers</div>
+                <div className={classNames("helper-color__toggle", {"helper-color__toggle_right": state.activeColor === "helpers"})}/>
               </div>
               <ChromePicker
                 color={state[state.activeColor === "canvas" ? "color" : "helpersColor"]}

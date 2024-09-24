@@ -37,6 +37,10 @@ export default class Wrapper {
     this.controller && this.controller.setHelpersColor(payload);
   }
 
+  setActiveLabel(payload) {
+    this.controller && this.controller.setActiveLabel(payload);
+  }
+
   reset() {
     this.controller && this.controller.reset();
   }

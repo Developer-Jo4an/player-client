@@ -13,31 +13,28 @@ export const useSceneCreator = (state, reducerFunc, ref) => {
 
   useEffect(() => {
     const eventBus = state?.wrapper?.controller?.eventBus;
+
     if (!eventBus) return;
 
-    eventBus?.addEventListener("item:set-scale", ({payload}) => {
-      if (payload + state.scale <= 0) return;
-      reducerFunc({type: "setScale", payload: payload + state.scale});
-    });
+    const eventBusData = {
+      "item:set-active": ({payload}) => reducerFunc({type: "setActive", payload}),
+      "item:set-isPaused": ({payload}) => reducerFunc({type: "setIsPaused", payload}),
+      "item:set-isHelpers": ({payload}) => reducerFunc({type: "setIsHelpers", payload}),
+      "item:set-color": ({payload}) => reducerFunc({type: "setColor", payload}),
+      "item:set-helpersColor": ({payload}) => reducerFunc({type: "setHelpersColor", payload}),
+      "item:set-activeLabel": ({payload}) => reducerFunc({type: "setActiveLabel", payload}),
+      "item:set-scale": ({payload}) => payload + state.scale > 0 && reducerFunc({
+        type: "setScale",
+        payload: payload + state.scale
+      })
+    };
 
-    eventBus.addEventListener("item:set-active", ({payload}) => {
-      reducerFunc({type: "setActive", payload});
-    });
+    const eventBusSetter = func => {
+      for (const key in eventBusData)
+        eventBus[func](key, eventBusData[key]);
+    };
 
-    eventBus.addEventListener("item:set-isPaused", ({payload}) => {
-      reducerFunc({type: "setIsPaused", payload});
-    });
-
-    eventBus.addEventListener("item:set-isHelpers", ({payload}) => {
-      reducerFunc({type: "setIsHelpers", payload});
-    });
-
-    eventBus.addEventListener("item:set-color", ({payload}) => {
-      reducerFunc({type: "setColor", payload});
-    });
-
-    eventBus.addEventListener("item:set-helpersColor", ({payload}) => {
-      reducerFunc({type: "setHelpersColor", payload});
-    });
+    eventBusSetter("addEventListener");
+    return () => eventBusSetter("removeEventListener");
   }, [state]);
 };

@@ -1,5 +1,6 @@
 import {inputController} from "./InputController";
 import {fromHex} from "../../utils/helpers";
+import EdgesHelper from "./helpers/EdgesHelper";
 
 class Controller {
 
@@ -7,7 +8,11 @@ class Controller {
     input: inputController
   };
 
-  constructor({container, eventBus, file, active, helpersColor, isHelpers, color}) {
+  helpersList = {
+    edges: EdgesHelper
+  };
+
+  constructor({container, eventBus, file, activeLabel, active, helpersColor, isHelpers, color}) {
     this.onResize = this.onResize.bind(this);
     this.update = this.update.bind(this);
 
@@ -24,6 +29,9 @@ class Controller {
     this.isHelpers = isHelpers;
     this.helpers = {};
 
+    this.activeLabel = activeLabel;
+    this.activeLabelEndFrame = null;
+
     this.isPaused = false;
 
     this.color = color;
@@ -38,9 +46,10 @@ class Controller {
       resolution: 1,
       autoResize: true,
       antialias: true,
-      backgroundColor: this.color
+      backgroundColor: fromHex(this.color)
     });
     globalThis.__PIXI_APP__ = this.app;
+    this.initHelpers();
     this.container.append(this.app.view);
     window.addEventListener("resize", this.onResize);
     this.app.ticker.add(this.update);
@@ -48,42 +57,19 @@ class Controller {
 
   update() {
     this.active && this.isHelpers && this.setHelpers();
-    this.active && console.log(this.active.labels);
+    if (!this.activeLabelEndFrame || this.isPaused) return;
+    if (this.active.currentFrame >= this.activeLabelEndFrame)
+      this.active.gotoAndPlay(this.activeLabel);
+  }
+
+  initHelpers() {
+    for (const key in this.helpersList) {
+      const HelperClass = this.helpersList[key];
+      this.helpers[key] = new HelperClass(this.app);
+    }
   }
 
   setActive(payload) {
-    this.setSettings(payload);
-    this.isPaused && this.setIsPaused();
-    !this.isHelpers && this.setIsHelpers();
-    this.setInput();
-    this.eventBus.dispatchEvent({type: "item:set-active", payload: this.active});
-  }
-
-  setIsPaused() {
-    this.isPaused = !this.isPaused;
-    this.active?.[this.isPaused ? "stop" : "gotoAndPlay"]?.(this.active.currentFrame);
-    this.eventBus.dispatchEvent({type: "item:set-isPaused", payload: this.isPaused});
-  }
-
-  setIsHelpers() {
-    this.isHelpers = !this.isHelpers;
-    this[!this.isHelpers ? "killHelpers" : "setHelpers"]();
-    this.eventBus.dispatchEvent({type: "item:set-isHelpers", payload: this.isHelpers});
-    this.app.render();
-  }
-
-  setColor(payload) {
-    this.color = fromHex(payload);
-    this.app.renderer.backgroundColor = this.color;
-    this.eventBus.dispatchEvent({type: "item:set-color", payload});
-  }
-
-  setHelpersColor(payload) {
-    this.helpersColor = payload;
-    this.eventBus.dispatchEvent({type: "item:set-helpersColor", payload});
-  }
-
-  setSettings(payload) {
     this.active && this.active.destroy({children: true});
 
     const {width, height} = this.app.renderer;
@@ -97,34 +83,75 @@ class Controller {
     const scaleY = height / bounds.height * 0.5;
     const scale = Math.min(scaleX, scaleY);
     this.active.scale.set(scale);
-
+    this.active.isHelp = true;
     this.app.stage.addChild(this.active);
+
+    this.setActiveLabel(null);
+
+    this.setControllers();
+
+    this.isPaused && this.setIsPaused();
+
+    !this.isHelpers && this.setIsHelpers();
+
+    this.eventBus.dispatchEvent({type: "item:set-active", payload: this.active});
+  }
+
+  setIsPaused() {
+    this.isPaused = !this.isPaused;
+    this.active?.[this.isPaused ? "stop" : "gotoAndPlay"]?.(this.active.currentFrame);
+    this.eventBus.dispatchEvent({type: "item:set-isPaused", payload: this.isPaused});
+  }
+
+  setIsHelpers() {
+    this.isHelpers = !this.isHelpers;
+    this[!this.isHelpers ? "killHelpers" : "setHelpers"]();
+    this.eventBus.dispatchEvent({type: "item:set-isHelpers", payload: this.isHelpers});
+  }
+
+  setColor(payload) {
+    this.color = fromHex(payload);
+    this.app.renderer.backgroundColor = this.color;
+    this.eventBus.dispatchEvent({type: "item:set-color", payload});
+  }
+
+  setHelpersColor(payload) {
+    this.helpersColor = payload;
+    this.eventBus.dispatchEvent({type: "item:set-helpersColor", payload});
+  }
+
+  setActiveLabel(payload) {
+    this.activeLabel = this.activeLabel === payload ? null : payload;
+    if (this.activeLabel) {
+      const necessaryIndex = this.active.labels.findIndex(({label}) => this.activeLabel === label) + 1;
+      this.activeLabelEndFrame = (this.active.labels[necessaryIndex]?.position ?? this.active.totalFrames) - 1;
+    } else {
+      this.activeLabelEndFrame = null;
+    }
+    this.eventBus.dispatchEvent({type: "item:set-activeLabel", payload: this.activeLabel});
   }
 
   killHelpers() {
-    Object.values(this.helpers).forEach(helper => !helper.destroyed && helper.destroy());
-    this.helpers = {};
+    for (const key in this.helpers) {
+      const helper = this.helpers[key];
+      helper?.killHelper?.();
+    }
   }
 
   setHelpers() {
     if (!this.active) return;
-
-    this.killHelpers();
-
-    const {x, y, width, height} = this.active.getBounds();
-
-    const border = this.helpers.border = new PIXI.Graphics();
-    border.lineStyle(2, fromHex(this.helpersColor)).drawRect(x, y, width, height);
-
-    const pivot = this.helpers.pivot = new PIXI.Graphics();
-    pivot.lineStyle(2, fromHex(this.helpersColor)).beginFill(0xff0000, 1).drawCircle(x + width / 2, y + height / 2, 2);
-
-    this.app.stage.addChild(border);
-    this.app.stage.addChild(pivot);
+    for (const key in this.helpers) {
+      const helper = this.helpers[key];
+      helper?.updateHelper?.({mainColor: fromHex(this.helpersColor)});
+    }
   }
 
-  setInput() {
-    this.controllers.input.init(this.eventBus, this.app, this.active, this.container);
+  setControllers() {
+    const {eventBus, app, active, container} = this;
+    for (const key in this.controllers) {
+      const controller = this.controllers[key];
+      controller?.init?.({eventBus, app, element: active, container});
+    }
   }
 
   onResize() {

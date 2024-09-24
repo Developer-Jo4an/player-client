@@ -11,7 +11,7 @@ class InputController {
     this.truthScale = 1;
   }
 
-  init(eventBus, app, element, container) {
+  init({eventBus, app, element, container}) {
     this.element = element;
     this.app = app;
     this.eventBus = eventBus;

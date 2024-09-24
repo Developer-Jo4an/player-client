@@ -1,0 +1,46 @@
+.tumbler {
+  overflow: hidden;
+
+  background-color: #ffffff;
+
+  border: solid #000000;
+
+  padding: 2px;
+
+  transition: .2s ease-in-out;
+
+  cursor: pointer;
+
+  &__wrapper {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    position: relative;
+  }
+
+  &__inner {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+
+    transition: .2s ease-in-out;
+
+    border-radius: 50%;
+
+    background-color: $ORANGE;
+
+    border: solid #000000;
+  }
+
+  &_active {
+    background-color: $ORANGE;
+
+    .tumbler__inner {
+      left: 100%;
+      transform: translate(-100%, -50%);
+      background-color: #ffffff;
+    }
+  }
+}

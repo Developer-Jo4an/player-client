@@ -1,1 +1,1 @@
-export const fromHex = color => Number(`0x${color.slice(1)}`)
+export const fromHex = color => Number(`0x${color.slice(1)}`);
